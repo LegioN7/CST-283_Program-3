@@ -1,6 +1,5 @@
 package org.example.program3;
 
-
 import java.time.LocalDate;
 
 // Data Structure
@@ -8,16 +7,25 @@ import java.time.LocalDate;
 // Track Name, Artist(s) Name, Released Year, Released Month, Released Day, In Spotify Playlists, In Spotify Charts, Streams
 public class Songs {
 
-    public String trackName;
-    public String artistName;
-    public int releasedYear;
-    public int releasedMonth;
-    public int releasedDay;
-    public int inSpotifyPlaylists;
-    public int inSpotifyCharts;
-    public long streams;
+    private String trackName;
+    private String artistName;
+    private int releasedYear;
+    private int releasedMonth;
+    private int releasedDay;
+    private int inSpotifyPlaylists;
+    private int inSpotifyCharts;
+    private long streams;
     private LocalDate releaseDate;
 
+    /**
+     * Constructor
+     * @param trackName
+     * @param artistName
+     * @param releaseDate
+     * @param inSpotifyPlaylists
+     * @param inSpotifyCharts
+     * @param streams
+     */
     public Songs(String trackName, String artistName, LocalDate releaseDate, int inSpotifyPlaylists, int inSpotifyCharts, long streams) {
         this.trackName = trackName;
         this.artistName = artistName;
@@ -27,6 +35,18 @@ public class Songs {
         this.streams = streams;
     }
 
+    /**
+     * Create a new song
+     * @param trackName
+     * @param artistName
+     * @param releasedYear
+     * @param releasedMonth
+     * @param releasedDay
+     * @param inSpotifyPlaylists
+     * @param inSpotifyCharts
+     * @param streams
+     * @return
+     */
     public static Songs createSong(String trackName, String artistName, LocalDate releaseDate, int inSpotifyPlaylists, int inSpotifyCharts, long streams) {
         return new Songs(trackName, artistName, releaseDate, inSpotifyPlaylists, inSpotifyCharts, streams);
     }
