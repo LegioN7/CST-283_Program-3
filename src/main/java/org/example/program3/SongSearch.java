@@ -263,8 +263,6 @@ public class SongSearch extends Application {
         vbox.setPadding(new Insets(30));
 
         // Create the input fields
-        // These input fields will allow the user to enter the data for a new song
-        // The input fields will have 6 fields: Track Name, Artist Name, Release Date, In Spotify Playlists, In Spotify Charts, Streams
         Label trackNameLabel = new Label("Track Name:");
         trackNameField = new TextField();
         Label artistNameLabel = new Label("Artist Name:");
@@ -273,10 +271,25 @@ public class SongSearch extends Application {
         releaseDatePicker = new DatePicker();
         Label inSpotifyPlaylistsLabel = new Label("In Spotify Playlists:");
         inSpotifyPlaylistsField = new TextField();
+        inSpotifyPlaylistsField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                inSpotifyPlaylistsField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
         Label inSpotifyChartsLabel = new Label("In Spotify Charts:");
         inSpotifyChartsField = new TextField();
+        inSpotifyChartsField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                inSpotifyChartsField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
         Label streamsLabel = new Label("Streams:");
         streamsField = new TextField();
+        streamsField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                streamsField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
 
         // Buttons for Add and Delete actions
         Button addButton = new Button("Add");
@@ -297,36 +310,27 @@ public class SongSearch extends Application {
         Button searchButton = new Button("Search");
         searchButton.setOnAction(e -> searchSong());
 
-        Button sortByButton = new Button("Sort By");
-        sortByButton.setOnAction(e -> sortBy());
+        Button sortByButton = new Button("Sort Ascending");
+        sortByButton.setOnAction(e -> {
+            if (isAscending) {
+                sortByButton.setText("Sort Descending");
+            } else {
+                sortByButton.setText("Sort Ascending");
+            }
+            sortBy();
+        });
 
         Button randomizeButton = new Button("Randomize");
         randomizeButton.setOnAction(e -> randomize());
 
         // Create the TextArea
-        // This TextArea will display the output of the search, sort, and randomize actions
-        // The TextArea will display the data in a table format
-        // The TextArea will have 6 columns: Track Name, Artist Name, Release Date, In Spotify Playlists, In Spotify Charts, Streams
         outputArea = new TextArea();
         outputArea.setFont(Font.font("Courier New", 12));
         outputArea.setPrefRowCount(20);
 
-        // Create HBox for the buttons
-        // This HBox will contain the buttons for Add, Delete, Sort By, and Randomize
-        HBox searchSortRandomizeBox = new HBox(10);
-        searchSortRandomizeBox.getChildren().addAll(searchButton, sortByButton, randomizeButton);
-
-        // Create HBox for the Add and Delete buttons
-        // This HBox will contain the buttons for Add and Delete
-        HBox addRemoveBox = new HBox(10);
-        addRemoveBox.getChildren().addAll(addButton, deleteButton);
-
-        // Add the HBoxes to the VBox
-        vbox.getChildren().addAll(searchSortRandomizeBox, addRemoveBox);
-
         // Create HBoxes for the input fields
         HBox trackArtistRow = new HBox(20);
-        trackArtistRow.getChildren().addAll(trackNameLabel, trackNameField, artistNameLabel, artistNameField);;
+        trackArtistRow.getChildren().addAll(trackNameLabel, trackNameField, artistNameLabel, artistNameField);
 
         // Create HBoxes for the Release Date
         HBox releaseDateRow = new HBox(20);
@@ -339,7 +343,14 @@ public class SongSearch extends Application {
         // Add HBoxes to the VBox
         vbox.getChildren().addAll(trackArtistRow, releaseDateRow, playlistChartsStreamsRow);
 
-        // Add the outputArea and tableView to the VBox
+        // Create HBox for the buttons
+        HBox actionButtonsBox = new HBox(10);
+        actionButtonsBox.getChildren().addAll(addButton, deleteButton, searchButton, sortByButton, randomizeButton);
+
+        // Add the HBox to the VBox
+        vbox.getChildren().add(actionButtonsBox);
+
+        // Add the outputArea to the VBox
         vbox.getChildren().add(outputArea);
 
         // Return the VBox in a Scene
@@ -448,6 +459,9 @@ public class SongSearch extends Application {
         }
         // Flip the flag for the next click
         isAscending = !isAscending;
+
+        // Load the sorted songs into the output area
+        loadOutputArea();
     }
 
     /**
@@ -572,7 +586,7 @@ public class SongSearch extends Application {
      * @param message   the message of the alert
      * @param alertType the type of the alert
      */
-    private static void showAlert(String title, String message, AlertType alertType) {
+    private void showAlert(String title, String message, AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
