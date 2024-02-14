@@ -294,15 +294,11 @@ public class SongSearch extends Application {
         // Buttons for Add and Delete actions
         Button addButton = new Button("Add");
         addButton.setOnAction(e -> {
-            Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to add?");
-            alert.showAndWait();
             addSong();
         });
 
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(e -> {
-            Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to remove?");
-            alert.showAndWait();
             deleteSong();
         });
 
@@ -392,19 +388,44 @@ public class SongSearch extends Application {
 
     private void addSong() {
 
-        // Alert message
-        // Confirm the user wants to add the song
-        Optional<ButtonType> result = confirmationAlert("Are you sure you want to add this song?");
+        // Alert Message
+        // Notify the user fields are empty
+        if (trackNameField.getText().isEmpty() || artistNameField.getText().isEmpty() ||
+                releaseDatePicker.getValue() == null || inSpotifyPlaylistsField.getText().isEmpty() ||
+                inSpotifyChartsField.getText().isEmpty() || streamsField.getText().isEmpty()) {
 
-        // If the user confirms the addition, add the song to the array
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            Songs newSong = createSongFromInput();
-            songs[currentIndex] = newSong;
-            currentIndex++;
-            // Clear the input fields
-            clearFields();
+            // Show an alert window
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText(null);
+            alert.setContentText("All fields must be filled");
+            alert.showAndWait();
+            return;
         }
-    }
+            // Confirm the user wants to add the song
+            Optional<ButtonType> result = confirmationAlert("Are you sure you want to add this song?");
+
+            // If the user confirms the addition, add the song to the array
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                Songs newSong = createSongFromInput();
+                songs[currentIndex] = newSong;
+                currentIndex++;
+
+                // Alert the User that the song was added
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Song Added");
+                alert.setHeaderText(null);
+                alert.setContentText("Song has been added successfully.");
+                alert.showAndWait();
+
+                // Clear the input fields
+                clearFields();
+
+                // Update the text area
+                loadOutputArea();
+            }
+        }
+
 
     /**
      * This method is responsible for deleting a song from the songs array.
@@ -433,8 +454,19 @@ public class SongSearch extends Application {
                     break;
                 }
             }
+
+            // Alert the User that the song was added
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Song Deleted");
+            alert.setHeaderText(null);
+            alert.setContentText("Song has been deleted successfully.");
+            alert.showAndWait();
+
             // Clear the input fields
             clearFields();
+
+            // Update the text area
+            loadOutputArea();
         }
     }
 
