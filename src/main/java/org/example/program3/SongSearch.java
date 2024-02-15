@@ -1,12 +1,9 @@
 package org.example.program3;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -15,7 +12,6 @@ import javafx.scene.control.Alert.AlertType;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 
@@ -30,7 +26,7 @@ import java.util.Random;
 // Define a class for one storage entity.
 //
 // Examples could be a list of "songs" with each song including a title, artist, genre, time, etc.
-// Another could be a "friend" with attributes name, birthdate, address, email, and so forth.
+// Another could be a "friend" with attribute name, birthdate, address, email, and so forth.
 //
 // Include at least four attributes with one as the key that defines the object uniquely.
 // Create a text file to contain the data for at least 10 of these objects.
@@ -38,7 +34,7 @@ import java.util.Random;
 // Feel free to keep your file simple with minimal white space or comma delimiters separating each of the attributes.
 // Create driver program to act as an interactive list manager that includes and array of objects or parallel arrays (no use of the Java ArrayList class, please).
 // Your interface should be driven by a formal frame-based JavaFX GUI that includes a larger text area for displaying your list data in columns.
-// Utilize buttons and labels as needed for the operations and user feedback/instructions.
+// Use buttons and labels as needed for the operations and user feedback/instructions.
 // For your text area, consider setting the text area font to a monospaced font (like Courier or Courier New) to maintain column formatting.
 // Button clicks should prompt for the various list actions.
 // Given this, however, you are nevertheless free to design your own (clear, clean, organized, user-friendly) interface within these general constraints.
@@ -51,8 +47,8 @@ import java.util.Random;
 //  ● Randomize the list
 //  ● Write the information back to the file in the same format
 // Design your application using guidelines to maximize modularity, usability, and maintainability.
-// Please avoid use of ArrayList class for storage and Arrays class for sorting. \
-// One key objective with this assignment is to work with the basic arrays and related algorithms.
+// Please avoid the use of ArrayList class for storage and Arrays class for sorting.
+// One key goal with this assignment is to work with the basic arrays and related algorithms.
 
 // Hints - consider techniques demonstrated in the following instructor examples:
 //  ● ParallelSort as an example for the interface
@@ -68,7 +64,7 @@ import java.util.Random;
 /**
  * The SongSearch class extends the Application class from JavaFX.
  * It provides a GUI for managing a list of songs, including adding, deleting, searching, sorting, and randomizing songs.
- * The song data is loaded from a text file and stored in an array of Songs objects.
+ * The song data is loaded from a text file and stored in an array of Song objects.
  * The GUI includes input fields for the song data, buttons for the various actions, and a TextArea and TableView for displaying the song data.
  * The class also includes private methods for each of the actions (add, delete, search, sort, randomize), as well as helper methods for loading the song data, creating the GUI, and showing alert messages.
  *
@@ -88,14 +84,6 @@ public class SongSearch extends Application {
     private TextField inSpotifyPlaylistsField;
     private TextField inSpotifyChartsField;
     private TextField streamsField;
-
-    /*
-    Keeping these here if I want to add them later
-    private TextField releasedYearField;
-    private TextField releasedMonthField;
-    private TextField releasedDayField;
-    private TextField releaseDateField;
-    */
 
 
     // Output area for displaying the song data
@@ -119,8 +107,6 @@ public class SongSearch extends Application {
      * The method creates a new Stage with the title "Spotify 2023 Song Search" and sets the Scene to the songSearchGUI method.
      * The method then shows the stage.
      * The method also calls the loadSongData method to load the song data from the text file.
-     * @param stage
-     * @throws Exception
      */
     @Override
     public void start(Stage stage) {
@@ -137,14 +123,14 @@ public class SongSearch extends Application {
             loadOutputArea();
 
         } catch (FileNotFoundException e) {
-            showAlert("Error", e.getMessage(), AlertType.ERROR);
+            showAlert(e.getMessage());
         }
     }
 
     /**
      * The FileNotFoundException class extends the Exception class.
-     * It is a custom exception that is thrown when the file is not found.
-     * The constructor takes a message as a parameter and passes it to the super class.
+     * It is a custom exception thrown when the file is not found.
+     * The constructor takes a message as a parameter and passes it to the superclass.
      */
     public static class FileNotFoundException extends Exception {
         public FileNotFoundException(String message) {
@@ -156,7 +142,7 @@ public class SongSearch extends Application {
      * This method is responsible for loading song data from a text file into an array of Songs objects.
      * The text file is read line by line, and each line is split into parts based on commas.
      * Each part is then trimmed of leading and trailing whitespace and assigned to the appropriate variable.
-     * A new Songs object is created with these variables and added to the songs array.
+     * A new Song object is created with these variables and added to the song array.
      * The method also updates a TableView with the song data.
      * If the file is not found, a FileNotFoundException is thrown.
      * If there is an error reading the file, an IOException is caught and an alert message is displayed.
@@ -165,20 +151,22 @@ public class SongSearch extends Application {
      */
     private void loadSongData() throws FileNotFoundException {
         // Debug Statement
-        System.out.println("Loading song data...");
+        // System.out.println("Loading song data...");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))){
             String line;
 
             while ((line = reader.readLine()) != null && currentIndex < ARRAY_SIZE) {
                 // Debug Statement
-                 System.out.println("Reading line: " + line); // Debugging statement
+                // System.out.println("Reading line: " + line); // Debugging statement
 
                 // Split the line into parts
                 // The split method uses a regular expression to split the line by commas
                 // The regular expression is a negative lookahead that splits the line by commas that are not inside quotes
                 // https://stackoverflow.com/questions/3481828/how-do-i-split-a-string-in-java
                 // https://stackoverflow.com/questions/1757065/java-splitting-a-comma-separated-string-but-ignoring-commas-in-quotes
+                
+                // I eventually removed all the quotes and adjusted the data to fit the format
                 String[] parts = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
                 if (parts.length < 8) {
                     // Debug Statement
@@ -195,8 +183,8 @@ public class SongSearch extends Application {
                 // Create a new Songs object with the data from the line
                 // The parts are assigned to the appropriate variables
                 // The release date is created with the year, month, and day
-                // The inSpotifyPlaylists, inSpotifyCharts, and streams are parsed as integers and long
-                // Steams is long because it's a large number
+                // The inSpotifyPlaylists, inSpotifyCharts.
+                // Streams are parsed longs
                 String trackName = parts[0];
                 String artistName = parts[1].replaceAll("^\"|\"$", ""); // Remove the quotes from the artist name
                 int releasedYear = Integer.parseInt(parts[2]);
@@ -222,7 +210,7 @@ public class SongSearch extends Application {
                 currentIndex++;
             }
         } catch (IOException e) {
-            showAlert("Error", e.getMessage(), AlertType.ERROR);
+            showAlert(e.getMessage());
         }
     }
 
@@ -234,7 +222,7 @@ public class SongSearch extends Application {
      */
     private void loadOutputArea() {
         StringBuilder output = new StringBuilder();
-        String format = "%-50s %-25s %-15s %-25s %-20s %-20s\n";
+        String format = "%-50s | %-25s | %-15s | %-25s | %-20s | %-20s\n";
 
         // Add header
         output.append(String.format(format, "Track Name", "Artist Name", "Release Date", "In Spotify Playlists", "In Spotify Charts", "Streams"));
@@ -273,34 +261,30 @@ public class SongSearch extends Application {
         inSpotifyPlaylistsField = new TextField();
         inSpotifyPlaylistsField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                inSpotifyPlaylistsField.setText(newValue.replaceAll("[^\\d]", ""));
+                inSpotifyPlaylistsField.setText(newValue.replaceAll("\\D", ""));
             }
         });
         Label inSpotifyChartsLabel = new Label("In Spotify Charts:");
         inSpotifyChartsField = new TextField();
         inSpotifyChartsField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                inSpotifyChartsField.setText(newValue.replaceAll("[^\\d]", ""));
+                inSpotifyChartsField.setText(newValue.replaceAll("\\D", ""));
             }
         });
         Label streamsLabel = new Label("Streams:");
         streamsField = new TextField();
         streamsField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                streamsField.setText(newValue.replaceAll("[^\\d]", ""));
+                streamsField.setText(newValue.replaceAll("\\D", ""));
             }
         });
 
         // Buttons for Add and Delete actions
         Button addButton = new Button("Add");
-        addButton.setOnAction(e -> {
-            addSong();
-        });
+        addButton.setOnAction(e -> addSong());
 
         Button deleteButton = new Button("Delete");
-        deleteButton.setOnAction(e -> {
-            deleteSong();
-        });
+        deleteButton.setOnAction(e -> deleteSong());
 
         // Buttons for Search, Sort By, and Randomize actions
         Button searchButton = new Button("Search");
@@ -322,26 +306,30 @@ public class SongSearch extends Application {
         // Create the TextArea
         outputArea = new TextArea();
         outputArea.setFont(Font.font("Courier New", 12));
-        outputArea.setPrefRowCount(20);
+        outputArea.setPrefRowCount(28);
 
         // Create HBoxes for the input fields
         HBox trackArtistRow = new HBox(20);
         trackArtistRow.getChildren().addAll(trackNameLabel, trackNameField, artistNameLabel, artistNameField);
 
-        // Create HBoxes for the Release Date
-        HBox releaseDateRow = new HBox(20);
-        releaseDateRow.getChildren().addAll(releaseDateLabel, releaseDatePicker);
+        // Create HBox for the Search button
+        HBox searchButtonBox = new HBox(10);
+        searchButtonBox.getChildren().addAll(searchButton, sortByButton, randomizeButton);
 
         // Create HBoxes for the In Spotify Playlists, In Spotify Charts, and Streams
         HBox playlistChartsStreamsRow = new HBox(20);
-        playlistChartsStreamsRow.getChildren().addAll(inSpotifyPlaylistsLabel, inSpotifyPlaylistsField, inSpotifyChartsLabel, inSpotifyChartsField, streamsLabel, streamsField);
+        playlistChartsStreamsRow.getChildren().addAll(releaseDateLabel, releaseDatePicker, inSpotifyPlaylistsLabel, inSpotifyPlaylistsField, inSpotifyChartsLabel, inSpotifyChartsField, streamsLabel, streamsField);
+
+        vbox.getChildren().addAll(trackArtistRow);
+
+        vbox.getChildren().add(searchButtonBox);
 
         // Add HBoxes to the VBox
-        vbox.getChildren().addAll(trackArtistRow, releaseDateRow, playlistChartsStreamsRow);
+        vbox.getChildren().addAll(playlistChartsStreamsRow);
 
         // Create HBox for the buttons
         HBox actionButtonsBox = new HBox(10);
-        actionButtonsBox.getChildren().addAll(addButton, deleteButton, searchButton, sortByButton, randomizeButton);
+        actionButtonsBox.getChildren().addAll(addButton, deleteButton);
 
         // Add the HBox to the VBox
         vbox.getChildren().add(actionButtonsBox);
@@ -350,7 +338,7 @@ public class SongSearch extends Application {
         vbox.getChildren().add(outputArea);
 
         // Return the VBox in a Scene
-        return new Scene(vbox, 1200, 500);
+        return new Scene(vbox, 1400, 720);
     }
 
     /**
@@ -440,6 +428,18 @@ public class SongSearch extends Application {
     // https://www.geeksforgeeks.org/javafx-alert-with-examples/
     // https://stackoverflow.com/questions/48245215/how-can-i-make-a-javafx-confirmation-alert-box-wait-till-ok-is-pressed-but-perfo
     private void deleteSong() {
+        // Alert Message
+        // Notify the user fields are empty
+        if (trackNameField.getText().isEmpty() || artistNameField.getText().isEmpty()) {
+            // Show an alert window
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText(null);
+            alert.setContentText("Track Name and Artist fields need to be filled.");
+            alert.showAndWait();
+            return;
+        }
+
         // Alert message
         // Confirm the user wants to delete the song
         Optional<ButtonType> result = confirmationAlert("Are you sure you want to delete this song?");
@@ -478,22 +478,70 @@ public class SongSearch extends Application {
      * After the songs are sorted, the isAscending flag is flipped for the next sort operation.
      */
     private void sortBy() {
-        for (int i = 0; i < currentIndex - 1; i++) {
-            for (int j = 0; j < currentIndex - i - 1; j++) {
-                if ((isAscending && songs[j].getTrackName().compareTo(songs[j+1].getTrackName()) > 0) ||
-                        (!isAscending && songs[j].getTrackName().compareTo(songs[j+1].getTrackName()) < 0)) {
-                    // Swap songs[j] and songs[j+1]
-                    Songs temp = songs[j];
-                    songs[j] = songs[j+1];
-                    songs[j+1] = temp;
+        // Get the text from the output area
+        // The getText method is used to get the text from the output area
+        String outputText = outputArea.getText();
+
+        // Split the text into lines
+        // The split method is used to split the text into lines based on the newline character
+        String[] lines = outputText.split("\n");
+
+        // Create a new array for the songs in the output area
+        // The length of the array is the length of the lines array minus 1
+        Songs[] outputSongs = new Songs[lines.length - 1];
+
+        // Create a Songs object for each line and add it to the array
+        // The for loop starts at 1 to skip the header line
+        int validSongsCount = 0;
+        for (int i = 1; i < lines.length; i++) {
+            String[] parts = lines[i].split("\\|");
+            if (parts.length >= 6 && !parts[0].isEmpty() && !parts[1].isEmpty() && !parts[2].isEmpty() && !parts[3].isEmpty() && !parts[4].isEmpty() && !parts[5].isEmpty()) {
+                // Check if all required fields are not empty
+                String trackName = parts[0].trim();
+                String artistName = parts[1].trim();
+                    LocalDate releaseDate = LocalDate.parse(parts[2].trim());
+                    int inSpotifyPlaylists = Integer.parseInt(parts[3].trim());
+                    int inSpotifyCharts = Integer.parseInt(parts[4].trim());
+                    long streams = Long.parseLong(parts[5].trim());
+                    outputSongs[validSongsCount] = new Songs(trackName, artistName, releaseDate, inSpotifyPlaylists, inSpotifyCharts, streams);
+                    validSongsCount++;
+
+                }
+            }
+
+
+        // Sort the array
+        // The Bubble Sort algorithm is used to sort the array
+
+        // Inner and Outer Loop
+        // The outer loop iterates over the array from 0 to the second-to-last element
+        // The inner loop iterates over the array from 0 to the second-to-last element minus the current iteration of the outer loop
+        for (int i = 0; i < validSongsCount - 1; i++) {
+            for (int j = 0; j < validSongsCount - i - 1; j++) {
+                if ((isAscending && outputSongs[j].getTrackName().compareTo(outputSongs[j+1].getTrackName()) > 0) ||
+                        (!isAscending && outputSongs[j].getTrackName().compareTo(outputSongs[j+1].getTrackName()) < 0)) {
+                    // Swap outputSongs[j] and outputSongs[j+1]
+                    Songs temp = outputSongs[j];
+                    outputSongs[j] = outputSongs[j+1];
+                    outputSongs[j+1] = temp;
                 }
             }
         }
+
         // Flip the flag for the next click
         isAscending = !isAscending;
 
-        // Load the sorted songs into the output area
-        loadOutputArea();
+        // Update the text area with the sorted songs
+        // The loadOutputArea method is called to update the text area with the sorted songs
+        StringBuilder output = new StringBuilder();
+        String format = "%-50s| %-25s | %-15s | %-25s | %-20s | %-20s\n";
+        output.append(String.format(format, "Track Name", "Artist Name", "Release Date", "In Spotify Playlists", "In Spotify Charts", "Streams"));
+        for (int i = 0; i < validSongsCount; i++) {
+            Songs song = outputSongs[i];
+            output.append(String.format(format, song.getTrackName(), song.getArtistName(), song.getReleaseDate(), song.getInSpotifyPlaylists(), song.getInSpotifyCharts(), song.getStreams()));
+        }
+        // Set the text of the output area
+        outputArea.setText(output.toString());
     }
 
     /**
@@ -545,8 +593,8 @@ public class SongSearch extends Application {
         // Header and data format for the output
         // I had to adjust the sizes to make it fit
         // I also had to truncate data because the data I found was inconsistent and too long
-        String headerFormat = "%-50s %-25s %-15s %-25s %-20s %-20s\n";
-        String dataFormat = "%-50s %-25s %-15s %-25d %-20d %-20d\n";
+        String headerFormat = "%-50s | %-25s | %-15s | %-25s | %-20s | %-20s\n";
+        String dataFormat = "%-50s | %-25s | %-15s | %-25d | %-20d | %-20d\n";
 
         // Add header
         searchResult.append(String.format(headerFormat, "Track Name", "Artist Name", "Release Date", "In Spotify Playlists", "In Spotify Charts", "Streams"));
@@ -598,12 +646,10 @@ public class SongSearch extends Application {
     }
 
     /**
-     * This method is responsible for showing an alert message.
-     * It creates an Alert object with the specified title, message, and alert type, and shows the alert.
+     * Displays an alert dialog with the provided message.
+     * The alert window is to confirm the user wants to add or delete a song
      *
-     * @param title     the title of the alert
-     * @param message   the message of the alert
-     * @param alertType the type of the alert
+     * @param message   the message to display in the body of the alert dialog
      */
     public static Optional<ButtonType> confirmationAlert(String message) {
         Alert alert = new Alert(AlertType.CONFIRMATION, message);
@@ -614,13 +660,11 @@ public class SongSearch extends Application {
      * This method is responsible for showing an alert message.
      * It creates an Alert object with the specified title, message, and alert type, and shows the alert.
      *
-     * @param title     the title of the alert
-     * @param message   the message of the alert
-     * @param alertType the type of the alert
+     * @param message the message of the alert
      */
-    private void showAlert(String title, String message, AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
+    private void showAlert(String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
